@@ -18,10 +18,10 @@ int main() {
         	body.append(data, data_length);
         	return true;
       	});
-      	cout << "Receive post request " << body << endl;
 
       	bool isSuccess = MarkingHandler::instance()->doMarking(body);
 
+      	res.set_header("Access-Control-Allow-Origin", "*");
       	if (isSuccess) {
       		res.set_content(
       			(new ResponseDTO(ErrorCode::SUCCESS, "Success"))->toJson(),
@@ -34,8 +34,8 @@ int main() {
 	  });
 
 	svr.Get("/mark", [](const httplib::Request &, httplib::Response &res) {
-		cout << "Receive get request " << endl;
 		DataDTO *data = MarkingHandler::instance()->getData();
+		res.set_header("Access-Control-Allow-Origin", "*");
 	  	res.set_content(
 	  		(new ResponseDTO(ErrorCode::SUCCESS, "Success", data))->toJson(),
 	  		"application/json");

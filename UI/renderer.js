@@ -99,7 +99,12 @@ function setFailed(messageFailed) {
   document.getElementById("failed-box").innerHTML = messageFailed;
 }
 
+function isSuccess(response) {
+  return response.errorCode === 0;
+}
+
 async function getAPI(url, pathFile) {
+  pathFile = '/home/baopdh/Downloads/school/Multiple-choice-Marking/images'
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "text/plain");
   var raw = pathFile;
@@ -111,32 +116,42 @@ async function getAPI(url, pathFile) {
     redirect: 'follow'
   };
 
-  const result = await fetch("http://localhost:8080/mark", requestOptions)
+  try {
+    const result = await fetch("http://localhost:8080/mark", requestOptions);
+    const jsonData = await result.text();
+    const dataObject = JSON.parse(jsonData);
 
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'
-  };
+    if (!isSuccess(dataObject)) {
+      return setFailed(dataObject.message);
+    }
 
-  const data = await fetch(url, requestOptions);
-  const jsonData = await data.text();
-  const dataObject = JSON.parse(jsonData);
+    const getResult = async () => {
+      var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+      };
+      const data = await fetch(url, requestOptions);
+      const jsonData = await data.text();
+      const dataObject = JSON.parse(jsonData);
+  
+      if (!isSuccess(dataObject)) {
+        return setFailed(dataObject.message);
+      }
+  
+      if (dataObject.data.status === -1) {
+        return setFailed(dataObject.data.message);
+      } else if (dataObject.data.status === 1 || dataObject.data.status === 2) {
+        return setTimeout(() => getResult(), 2000);
+      }
+  
+      dataCSV = dataObject.data.data.listofpoints;
+      show(dataObject.data.data);
+    }
 
-  if (dataObject.errorCode == -1) {
-    setFailed(dataObject.message);
-    return;
+    getResult();
+  } catch (err) {
+    setFailed(err);
   }
-
-  if (dataObject.data.status == -1) {
-    setFailed(dataObject.data.message);
-    return;
-  } else if (dataObject.data.status == 1 || dataObject.data.status == 2) {
-    setTimeout(getAPI(url), 3000);
-    return;
-  }
-
-  dataCSV = dataObject.data.data.listofpoints;
-  show(dataObject.data.data);
 }
 
 document.getElementById("test2").addEventListener("click", function () {
@@ -144,9 +159,7 @@ document.getElementById("test2").addEventListener("click", function () {
   document.getElementById("table-wrapper-id").style.display = "none";
 
   const pathFile = document.getElementById("folder-name-container").textContent;
-  // getAPI("https://run.mocky.io/v3/aa25fc9a-857a-4954-9fa9-8eb16412039d", pathFile);
-  // getAPI("https://run.mocky.io/v3/a5c40f46-8e1c-4bcc-a682-e1c2b6d6f5e3", pathFile);
-  // getAPI("https://run.mocky.io/v3/f5b11662-10da-4088-99cd-72d350fba76a", pathFile);
+
   getAPI("http://localhost:8080/mark", pathFile);
 });
 

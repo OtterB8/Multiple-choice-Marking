@@ -32,7 +32,7 @@ class MarkingDTO: public DataDTO {
 				split = ",";
 			}
 
-			res += "]}";
+			res += "]}}";
 
 			return res;
 		}
