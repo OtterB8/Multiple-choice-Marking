@@ -1,0 +1,28 @@
+{
+  "errorCode": 0,
+  "message": "Success",
+  "data": {
+    "status": 0,
+    "message": "Success",
+    "data": {
+      "numberofquestions": 40,
+      "listofpoints": [
+        {
+          "name": "baithi-2",
+          "identification": 101210,
+          "numberrightanswer": 39
+        },
+        {
+          "name": "baithi-1",
+          "identification": 101210,
+          "numberrightanswer": 39
+        },
+        {
+          "name": "baithi",
+          "identification": 101210,
+          "numberrightanswer": 39
+        }
+      ]
+    }
+  }
+}
