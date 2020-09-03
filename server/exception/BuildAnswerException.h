@@ -4,5 +4,5 @@
 
 class BuildAnswerException : public BaseException {
 	public:
-		BuildAnswerException(string cause): BaseException(cause) {}
+		BuildAnswerException(string const &cause): BaseException(cause) {}
 };

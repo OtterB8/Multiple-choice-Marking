@@ -4,5 +4,5 @@
 
 class MarkingException : public BaseException {
 	public:
-		MarkingException(string cause): BaseException(cause) {}
+		MarkingException(string const &cause): BaseException(cause) {}
 };

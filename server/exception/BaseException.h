@@ -10,7 +10,7 @@ class BaseException : public exception {
 	private:
 		string cause;
 	public:
-		BaseException(string cause) {
+		BaseException(string const &cause) {
 			this->cause = cause;
 		}
 	public:

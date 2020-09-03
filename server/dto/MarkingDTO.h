@@ -15,7 +15,7 @@ class MarkingDTO: public DataDTO {
 		MarkingStatus status;
 		string message;
 	public:
-		MarkingDTO(vector<TestDTO> const &listofpoints, MarkingStatus status, string message) {
+		MarkingDTO(vector<TestDTO> const &listofpoints, MarkingStatus status, string const &message) {
 			this->listofpoints = listofpoints;
 			this->status = status;
 			this->message = message;

@@ -1,4 +1,4 @@
-#include <constant/MarkingStatus.h>
+#include <constant/MarkingStatus/MarkingStatus.h>
 #include <dto/TestDTO.h>
 #include <dto/MarkingDTO.h>
 #include <constant/config.h>
@@ -9,10 +9,9 @@
 #include <thread>
 #include <unordered_map>
 #include <future>
-#include <util/marking/BlobDetector.h>
-#include <util/marking/Process.h>
 #include <exception/BuildAnswerException.h>
 #include <exception/MarkingException.h>
+#include <util/marking/MarkingUtilImpl.h>
 
 using namespace std;
 
@@ -25,12 +24,14 @@ class MarkingHandler
         MarkingStatus status;
         vector<TestDTO> result;
         string message;
+        MarkingUtil *markingUtil;
     private:
         unordered_map<int, vector<char>> buildAnswerFromImage(string const &path);
-        vector<TestDTO> mark(string const &path, unordered_map<int, vector<char>> answers, bool shouldSaveMarkedImage);
+        vector<TestDTO> mark(string const &path, unordered_map<int, vector<char>> const &answers, bool shouldSaveMarkedImage);
         void actualMarking(string const &path);
     public:
         static MarkingHandler *instance();
         bool doMarking(string const &path);
         MarkingDTO *getData();
+        void setMarkingUtil(MarkingUtil *markingUtil);
 };

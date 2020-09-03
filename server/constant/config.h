@@ -3,7 +3,7 @@
 
 using namespace std;
 
-const int NUMBER_OF_PROCESSING_THREAD = 3;
+const int NUMBER_OF_PROCESSING_THREAD = 4;
 
 const string FOLDER_ANSWER = "DapAn/";
 const string FOLDER_TEST = "BaiLam/";

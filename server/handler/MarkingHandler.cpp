@@ -3,6 +3,7 @@
 
 MarkingHandler::MarkingHandler() {
 	this->status = MarkingStatus::IDLE;
+	this->markingUtil = new MarkingUtilImpl;
 }
 
 MarkingHandler* MarkingHandler::s_instance = 0;
@@ -46,17 +47,7 @@ unordered_map<int, vector<char>> MarkingHandler::buildAnswerFromImage(string con
 			break;
 
 		futures.push_back(async(launch::async, [batch, this]() {
-			unordered_map<int, vector<char>> answers;
-			for (string image: batch) {
-				int check = readAnswer(image.c_str(), answers);
-				if (check == -1) {
-					throw BuildAnswerException("Exam code equals 0 or duplicated");
-				}
-				if (!check) {
-					throw BuildAnswerException("Incorrect answer format");
-				}
-			}
-			return answers;
+			return this->markingUtil->buildAnswers(batch);
 		}));
 	}
 	
@@ -72,7 +63,7 @@ unordered_map<int, vector<char>> MarkingHandler::buildAnswerFromImage(string con
 	return res;
 }
 
-vector<TestDTO> MarkingHandler::mark(string const &path, unordered_map<int, vector<char>> answers, bool shouldSaveMarkedImage) {
+vector<TestDTO> MarkingHandler::mark(string const &path, unordered_map<int, vector<char>> const &answers, bool shouldSaveMarkedImage) {
 	string markedImagesPath = path + "marked/";
 	FileUtil::instance()->createDirectory(markedImagesPath);
 
@@ -93,19 +84,11 @@ vector<TestDTO> MarkingHandler::mark(string const &path, unordered_map<int, vect
 		if (batch.size() == 0)
 			break;
 
-		futures.push_back(async(launch::async, [batch, answers, markedImagesPath]() {
+		futures.push_back(async(launch::async, [batch, answers, markedImagesPath, shouldSaveMarkedImage, this]() {
 			vector<TestDTO> marked;
 			for (string image: batch) {
-				pair<int, int> result;
-				Mat visualize;
-				try {
-					tie(result, visualize) = examiner(image.c_str(), answers);
-					marked.push_back(
-						TestDTO(result.first, FileUtil::instance()->getFileName(image, false), result.second));
-					imwrite(markedImagesPath + FileUtil::instance()->getFileName(image, true), visualize);
-				} catch (const char *msg) {
-					throw MarkingException(msg);
-				}
+				pair<int, int> result = this->markingUtil->mark(image, answers, shouldSaveMarkedImage, markedImagesPath + FileUtil::instance()->getFileName(image, true));
+				marked.push_back(TestDTO(result.first, FileUtil::instance()->getFileName(image, false), result.second));
 			}
 			return marked;
 		}));
@@ -161,4 +144,8 @@ bool MarkingHandler::doMarking(string const &path) {
 	t.detach();
 
 	return true;
+}
+
+void MarkingHandler::setMarkingUtil(MarkingUtil *markingUtil) {
+	this->markingUtil = markingUtil;
 }
