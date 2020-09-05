@@ -104,7 +104,6 @@ function isSuccess(response) {
 }
 
 async function getAPI(url, pathFile) {
-  pathFile = '/home/baopdh/Downloads/school/Multiple-choice-Marking/images'
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "text/plain");
   var raw = pathFile;
