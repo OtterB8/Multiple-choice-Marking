@@ -1,10 +1,14 @@
 #!/bin/bash
+echo "Installing required packages"
+apt-get install build-essential
+apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+
 echo "Getting OpenCV Source Code from Github repo..."
 git clone https://github.com/opencv/opencv.git
 
 echo "Building OpenCV from Source Using CMake..."
 cd opencv
-mkdir Building
+mkdir build
 cd build
 cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local ..
 make -j4

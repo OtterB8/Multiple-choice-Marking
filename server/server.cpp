@@ -1,14 +1,4 @@
-// #include <iostream>
-// #include <lib/external/httplib.h>
-// #include <handler/MarkingHandler.h>
-// #include <thread>
-// #include <dto/ResponseDTO.h>
-// #include <constant/ErrorCode/ErrorCode.h>
-
 #include <controller/MarkingController.h>
-
-// using namespace std;
-// using namespace httplib;
 
 int main() {
 	Server svr;
