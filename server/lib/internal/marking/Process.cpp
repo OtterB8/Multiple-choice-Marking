@@ -44,7 +44,7 @@ void getInformation(vector<pair<Point, int>> &posOfExamCode, vector<pair<Point, 
 		getPosOfTokenOfAnswer(posOfAnswer, i);
 }
 
-int readAnswer(const char* path, unordered_map<int, vector<char>> &answers)
+void readAnswer(const char* path, unordered_map<int, vector<char>> &answers)
 {
 	BlobDetector* blob = new BlobDetector;
 	bool check = blob->LoadImage(path);
@@ -61,6 +61,7 @@ int readAnswer(const char* path, unordered_map<int, vector<char>> &answers)
 	getInformation(posOfExamCode, posOfCandidateNumber, posOfAnswer);
 
 	int examCode = 0;
+	int countCircle = 0;
 	//Get examCode
 	for (int i = 0; i < circles.size(); i++)
 		for (int j = 0; j < posOfExamCode.size(); j++)
@@ -69,14 +70,20 @@ int readAnswer(const char* path, unordered_map<int, vector<char>> &answers)
 			if (abs(circles[i].x - temp.x) <= deviation && abs(circles[i].y - temp.y) <= deviation)
 			{
 				examCode += posOfExamCode[j].second;
+				countCircle++;
 				break;
 			}
 		}
-		
-	if (!examCode || answers.find(examCode) != answers.end())
+
+	if (countCircle != 3)
 	{
 		delete blob;
-		return -1;
+		throw "Exam code is invalid";
+	}
+	if (answers.find(examCode) != answers.end())
+	{
+		delete blob;
+		throw "Exam code is already exist";
 	}
 
 	vector<pair<char, int>> answer;
@@ -103,13 +110,13 @@ int readAnswer(const char* path, unordered_map<int, vector<char>> &answers)
 		if (!answer[i].second || answer[i].second > 1)
 		{
 			delete blob;
-			return 0;
+			throw "Answer is in incorrect format";
 		}
 		res.second.push_back(answer[i].first);
 	}
 	answers.insert(res);
+
 	delete blob;
-	return 1;
 }
 
 pair<pair<int, int>,Mat> examiner(const char* path, unordered_map<int, vector<char>> answers)
@@ -129,7 +136,7 @@ pair<pair<int, int>,Mat> examiner(const char* path, unordered_map<int, vector<ch
 	vector<pair<Point, pair<int, char>>> posOfAnswer;
 	getInformation(posOfExamCode, posOfCandidateNumber, posOfAnswer);
 
-	int examCode = 0, candidateNumber = 0, score = 0;
+	int examCode = 0, candidateNumber = 0, score = 0, countCircleOfExamCode = 0, countCircleOfCandidateNumber = 0;
 	
 	//Get candidateNumber and examCode
 	for (int i = 0; i < circles.size(); i++)
@@ -140,6 +147,7 @@ pair<pair<int, int>,Mat> examiner(const char* path, unordered_map<int, vector<ch
 			if (abs(circles[i].x - temp.x) <= deviation && abs(circles[i].y - temp.y) <= deviation)
 			{
 				examCode += posOfExamCode[j].second;
+				countCircleOfExamCode++;
 				break;
 				continue;
 			}
@@ -151,9 +159,23 @@ pair<pair<int, int>,Mat> examiner(const char* path, unordered_map<int, vector<ch
 			if (abs(circles[i].x - temp.x) <= deviation && abs(circles[i].y - temp.y) <= deviation)
 			{
 				candidateNumber += posOfCandidateNumber[j].second;
+				countCircleOfCandidateNumber++;
 				break;
 			}
 		}
+	}
+
+	if (countCircleOfExamCode != 3 && countCircleOfCandidateNumber != 6)
+	{
+		throw "Exam code and candidate number are invalid";
+	}
+	if (countCircleOfExamCode != 3)
+	{
+		throw "Exam code is invalid";
+	}
+	if (countCircleOfCandidateNumber != 6)
+	{
+		throw "Candidate number is invalid";
 	}
 
 	//Get score

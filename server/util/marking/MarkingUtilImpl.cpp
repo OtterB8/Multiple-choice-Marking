@@ -2,17 +2,13 @@
 
 unordered_map<int, vector<char>> MarkingUtilImpl::buildAnswers(const vector<string> &images) {
 	unordered_map<int, vector<char>> answers;
-
-	for (string image: images) {
-		int check = readAnswer(image.c_str(), answers);
-		if (check == -1) {
-			throw BuildAnswerException("Exam code equals 0 or duplicated");
+	try {
+		for (string image: images) {
+			readAnswer(image.c_str(), answers);
 		}
-		if (!check) {
-			throw BuildAnswerException("Incorrect answer format");
-		}
+	} catch (const char *msg) {
+		throw BuildAnswerException(msg);
 	}
-
 	return answers;
 }
 
