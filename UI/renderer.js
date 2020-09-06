@@ -74,6 +74,7 @@ function download(itemsNotFormatted, numberquestion) {
 var dataCSV = "";
 
 function show(data) {
+  document.getElementById("loading-wrapper-id").style.display = "none";
   let tabs = "";
   var count = 1;
 
@@ -87,7 +88,6 @@ function show(data) {
       <td>${r.numberrightanswer / data.numberofquestions * 10}</td>
     </tr>`;
 
-    document.getElementById("loading-wrapper-id").style.display = "none";
     document.getElementById("test1").innerHTML = tabs;
     document.getElementById("table-wrapper-id").style.display = "flex";
   }
