@@ -72,6 +72,7 @@ function download(itemsNotFormatted, numberquestion) {
 }
 
 var dataCSV = "";
+var numberQuestion = 40;
 
 function show(data) {
   document.getElementById("loading-wrapper-id").style.display = "none";
@@ -144,6 +145,7 @@ async function getAPI(url, pathFile) {
       }
 
       dataCSV = dataObject.data.data.listofpoints;
+      numberQuestion = dataObject.data.data.numberofquestions;
       show(dataObject.data.data);
     }
 
@@ -170,5 +172,5 @@ document.getElementById("myFile").addEventListener("change", function () {
 
 document.getElementById("export-csv").addEventListener("click", function () {
   const itemsNotFormatted = dataCSV;
-  download(itemsNotFormatted, 40);
+  download(itemsNotFormatted, numberQuestion);
 });
