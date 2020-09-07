@@ -132,17 +132,17 @@ async function getAPI(url, pathFile) {
       const data = await fetch(url, requestOptions);
       const jsonData = await data.text();
       const dataObject = JSON.parse(jsonData);
-  
+
       if (!isSuccess(dataObject)) {
         return setFailed(dataObject.message);
       }
-  
+
       if (dataObject.data.status === -1) {
         return setFailed(dataObject.data.message);
       } else if (dataObject.data.status === 1 || dataObject.data.status === 2) {
         return setTimeout(() => getResult(), 2000);
       }
-  
+
       dataCSV = dataObject.data.data.listofpoints;
       show(dataObject.data.data);
     }
@@ -170,5 +170,5 @@ document.getElementById("myFile").addEventListener("change", function () {
 
 document.getElementById("export-csv").addEventListener("click", function () {
   const itemsNotFormatted = dataCSV;
-  download(itemsNotFormatted, 10);
+  download(itemsNotFormatted, 40);
 });
